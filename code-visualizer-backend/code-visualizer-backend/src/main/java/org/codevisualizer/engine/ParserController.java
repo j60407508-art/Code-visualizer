@@ -16,7 +16,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @RestController
 @RequestMapping("/api/parser")
-@CrossOrigin(origins = "*")
+// @CrossOrigin(origins = "*")
+@CrossOrigin(origins = "${app.frontend-url:http://localhost:5173}")
 public class ParserController {
 
     @PostMapping("/analyze")
