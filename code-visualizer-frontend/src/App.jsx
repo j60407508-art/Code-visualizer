@@ -244,7 +244,12 @@ class OrderRepository {
         <div className="navbar">
           <h2>LLD Live Blueprint Visualizer 🚀</h2>
           <div className="status-bar">
-            <span className="status-dot" style={{ background: dotColor }} />
+            <span
+              className="status-dot"
+              role="status"
+              aria-label={`Sync status: ${syncStatus}`}
+              style={{ background: dotColor }}
+            />
             <span className="status-label">{syncStatus}</span>
           </div>
         </div>
