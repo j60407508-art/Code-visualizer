@@ -129,9 +129,10 @@ public class ParserController {
                     });
                 });
             });
-
+        } catch (com.github.javaparser.ParseProblemException e) {
+            return Map.of("error", "Invalid Java syntax: " + e.getProblems().get(0).getMessage());
         } catch (Exception e) {
-            return Map.of("error", "Parsing error: " + e.getMessage());
+            return Map.of("error", "Unexpected error while analyzing code: " + e.getMessage());
         }
 
         return Map.of("nodes", nodes, "edges", edges);
