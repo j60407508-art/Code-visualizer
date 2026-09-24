@@ -111,6 +111,8 @@ const styles = `
   }
 `;
 
+const DEBOUNCE_DELAY_MS = 1500;
+
 function App() {
   const [code, setCode] = useState(`// Type your LLD Code below to see smart relationships!
 
@@ -226,7 +228,7 @@ class OrderRepository {
 
   useEffect(() => {
     setSyncStatus('Typing...');
-    const timer = setTimeout(() => handleAnalyze(code), 1500);
+    const timer = setTimeout(() => handleAnalyze(code), DEBOUNCE_DELAY_MS);
     return () => clearTimeout(timer);
   }, [code, handleAnalyze]);
 
