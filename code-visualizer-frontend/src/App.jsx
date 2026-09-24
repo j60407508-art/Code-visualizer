@@ -220,6 +220,7 @@ class OrderRepository {
       setSyncStatus('Synced');
     } catch (error) {
       console.error('Error auto-updating blueprint:', error);
+      setSyncStatus('Error');
     }
   }, []);
 
@@ -231,7 +232,8 @@ class OrderRepository {
 
   const dotColor =
     syncStatus === 'Synced'     ? '#4caf50' :
-    syncStatus === 'Syncing...' ? '#ffeb3b' : '#ff9800';
+    syncStatus === 'Syncing...' ? '#ffeb3b' :
+    syncStatus === 'Error'      ? '#f44336' : '#ff9800';
 
   return (
     <>
