@@ -23,10 +23,6 @@ public class ParserController {
     public Map<String, Object> analyzeCode(@RequestBody Map<String, String> request) {
         String code = request.get("code");
 
-        if (code == null || code.isBlank()) {
-            return Map.of("error", "Request body must include a non-empty 'code' field.");
-        }
-
         List<Map<String, Object>> nodes = new ArrayList<>();
         List<Map<String, Object>> edges = new ArrayList<>();
         List<String> registeredClassNames = new ArrayList<>();
