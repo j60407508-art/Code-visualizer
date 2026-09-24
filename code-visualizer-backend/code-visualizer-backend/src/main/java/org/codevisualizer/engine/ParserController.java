@@ -56,43 +56,48 @@ public class ParserController {
                 boolean isSingleton = false;
                 boolean isFactory = false;
 
+                // if (!isInterface) {
+                //     // Check Singleton: Private constructor + static field of same class type
+                //     AtomicBoolean hasPrivateConstructor = new AtomicBoolean(false);
+                //     AtomicBoolean hasStaticSelfField = new AtomicBoolean(false);
+
+                //     cid.findAll(ConstructorDeclaration.class).forEach(constructor -> {
+                //         if (constructor.isPrivate()) {
+                //             hasPrivateConstructor.set(true);
+                //         }
+                //     });
+
+                //     cid.findAll(FieldDeclaration.class).forEach(field -> {
+                //         if (field.isStatic() && field.getVariables().stream()
+                //                 .anyMatch(v -> v.getType().asString().equals(name))) {
+                //             hasStaticSelfField.set(true);
+                //         }
+                //     });
+
+                //     if (hasPrivateConstructor.get() && hasStaticSelfField.get()) {
+                //         isSingleton = true;
+                //     }
+
+                //     // Check Factory Pattern: Name contains "Factory" OR has a method returning another type
+                //     if (name.toLowerCase().contains("factory")) {
+                //         isFactory = true;
+                //     } else {
+                //         // If any method creates or returns instances of other custom types in the ecosystem
+                //         for (MethodDeclaration method : cid.findAll(MethodDeclaration.class)) {
+                //             if (method.getNameAsString().startsWith("get") || method.getNameAsString().startsWith("create")) {
+                //                 String returnType = method.getType().asString();
+                //                 if (!returnType.equals("void") && !returnType.equals(name)) {
+                //                     isFactory = true;
+                //                     break;
+                //                 }
+                //             }
+                //         }
+                //     }
+                // }
+
                 if (!isInterface) {
-                    // Check Singleton: Private constructor + static field of same class type
-                    AtomicBoolean hasPrivateConstructor = new AtomicBoolean(false);
-                    AtomicBoolean hasStaticSelfField = new AtomicBoolean(false);
-
-                    cid.findAll(ConstructorDeclaration.class).forEach(constructor -> {
-                        if (constructor.isPrivate()) {
-                            hasPrivateConstructor.set(true);
-                        }
-                    });
-
-                    cid.findAll(FieldDeclaration.class).forEach(field -> {
-                        if (field.isStatic() && field.getVariables().stream()
-                                .anyMatch(v -> v.getType().asString().equals(name))) {
-                            hasStaticSelfField.set(true);
-                        }
-                    });
-
-                    if (hasPrivateConstructor.get() && hasStaticSelfField.get()) {
-                        isSingleton = true;
-                    }
-
-                    // Check Factory Pattern: Name contains "Factory" OR has a method returning another type
-                    if (name.toLowerCase().contains("factory")) {
-                        isFactory = true;
-                    } else {
-                        // If any method creates or returns instances of other custom types in the ecosystem
-                        for (MethodDeclaration method : cid.findAll(MethodDeclaration.class)) {
-                            if (method.getNameAsString().startsWith("get") || method.getNameAsString().startsWith("create")) {
-                                String returnType = method.getType().asString();
-                                if (!returnType.equals("void") && !returnType.equals(name)) {
-                                    isFactory = true;
-                                    break;
-                                }
-                            }
-                        }
-                    }
+                    isSingleton = isSingletonPattern(cid, name);
+                    isFactory = isFactoryPattern(cid, name);
                 }
 
                 // Build components data configuration
@@ -137,5 +142,40 @@ public class ParserController {
         }
 
         return Map.of("nodes", nodes, "edges", edges);
+    }
+
+        private boolean isSingletonPattern(ClassOrInterfaceDeclaration cid, String name) {
+        AtomicBoolean hasPrivateConstructor = new AtomicBoolean(false);
+        AtomicBoolean hasStaticSelfField = new AtomicBoolean(false);
+
+        cid.findAll(ConstructorDeclaration.class).forEach(constructor -> {
+            if (constructor.isPrivate()) {
+                hasPrivateConstructor.set(true);
+            }
+        });
+
+        cid.findAll(FieldDeclaration.class).forEach(field -> {
+            if (field.isStatic() && field.getVariables().stream()
+                    .anyMatch(v -> v.getType().asString().equals(name))) {
+                hasStaticSelfField.set(true);
+            }
+        });
+
+        return hasPrivateConstructor.get() && hasStaticSelfField.get();
+    }
+
+    private boolean isFactoryPattern(ClassOrInterfaceDeclaration cid, String name) {
+        if (name.toLowerCase().contains("factory")) {
+            return true;
+        }
+        for (MethodDeclaration method : cid.findAll(MethodDeclaration.class)) {
+            if (method.getNameAsString().startsWith("get") || method.getNameAsString().startsWith("create")) {
+                String returnType = method.getType().asString();
+                if (!returnType.equals("void") && !returnType.equals(name)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
