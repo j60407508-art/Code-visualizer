@@ -149,7 +149,8 @@ class OrderRepository {
   const handleAnalyze = useCallback(async (currentCode) => {
     setSyncStatus('Syncing...');
     try {
-      const response = await fetch('http://localhost:8080/api/parser/analyze', {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+      const response = await fetch(`${API_URL}/api/parser/analyze`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ code: currentCode }),
