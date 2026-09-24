@@ -138,13 +138,19 @@ class OrderRepository {
   const [edges, setEdges] = useState([]);
   const [syncStatus, setSyncStatus] = useState('Synced');
 
+  // Expected types from the backend: Controller, Service, DatabaseLayer,
+  // Interface, GenericClass. Anything else falls back to white and is logged
+  // so backend/frontend type drift is easy to spot.
   const getNodeColor = (type) => {
     switch (type) {
       case 'Controller':    return '#e1f5fe';
       case 'Service':       return '#e8f5e9';
       case 'DatabaseLayer': return '#fff3e0';
       case 'Interface':     return '#f3e5f5';
-      default:              return '#ffffff';
+      case 'GenericClass':  return '#ffffff';
+      default:
+        console.warn(`Unrecognized component type from backend: "${type}"`);
+        return '#ffffff';
     }
   };
 
