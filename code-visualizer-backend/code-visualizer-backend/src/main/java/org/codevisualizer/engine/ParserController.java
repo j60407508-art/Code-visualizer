@@ -33,6 +33,19 @@ public class ParserController {
      * @param request body containing a single "code" key with the Java source
      * @return a map with "nodes" and "edges" lists, or an "error" key on failure
      */
+    /**
+     * Parses a raw Java source snippet and returns a graph representation
+     * suitable for the frontend's node/edge visualizer.
+     *
+     * Runs in two passes:
+     *  1. Discover every class/interface, classify it (Controller/Service/etc.),
+     *     and detect Singleton/Factory pattern signatures.
+     *  2. Walk the same classes again to find inheritance, implementation,
+     *     and field-dependency edges between them.
+     *
+     * @param request body containing a single "code" key with the Java source
+     * @return a map with "nodes" and "edges" lists, or an "error" key on failure
+     */
     @PostMapping("/analyze")
     public Map<String, Object> analyzeCode(@RequestBody Map<String, String> request) {
         String code = request.get("code");
